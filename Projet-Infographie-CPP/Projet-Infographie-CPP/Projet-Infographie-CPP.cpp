@@ -1,11 +1,21 @@
 // Projet-Infographie-CPP.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
-
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <iostream>
+
+using namespace cv;
+using namespace std;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	Mat image = Mat::zeros(300, 600, CV_8UC3);
+	circle(image, Point(250, 150), 100, Scalar(0, 255, 128), -100);
+	circle(image, Point(350, 150), 100, Scalar(255, 255, 255), -100);
+	imshow("Display Window", image);
+	waitKey(0);
+	return 0;
 }
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
