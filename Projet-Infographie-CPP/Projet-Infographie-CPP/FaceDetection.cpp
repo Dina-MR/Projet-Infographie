@@ -1,31 +1,15 @@
-#include "opencv2/objdetect/objdetect.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include <opencv2/videoio.hpp>
-#include <opencv2/video.hpp>
-
-#include <iostream>
-#include <stdio.h>
+#include "FaceDetection.h"
 
 using namespace std;
 using namespace cv;
 
-// Function Headers
-void detectAndDisplay(Mat frame, CascadeClassifier cascade);
-void detectAndDisplayMulti(Mat frame, CascadeClassifier cascade);
-void detectAndDisplayVideo(VideoCapture caption, int indicator, CascadeClassifier cascade);
-void detectAndDisplayEyes(Mat frame);
+String CASCADE_PATH = "../../XML/haarcascade_frontalface_alt.xml";
+CascadeClassifier face_cascade;
 
-// Global variables
-String face_cascade_name = "/Users/macbook/Documents/UFR SCIENCES - Informatique/Cours/Infographie/TP5bis/moodle/haarcascade_frontalface_alt.xml";
-String face_and_eyes_cascade_name = "/Users/macbook/Documents/UFR SCIENCES - Informatique/Cours/Infographie/TP5bis/moodle/haarcascade_eye_tree_eyeglasses.xml";
+//string window_name = "Face detection";
+//RNG rng(12345);
 
-CascadeClassifier face_cascade, face_and_eyes_cascade;
-
-string window_name = "Face detection";
-RNG rng(12345);
-
-int main(int argc, const char** argv)
+/*int main(int argc, const char** argv)
 {
     //read an image
     Mat img = imread("/Users/macbook/Documents/UFR SCIENCES - Informatique/Cours/Infographie/TP5bis/moodle/multiple.jpg");
@@ -71,36 +55,73 @@ int main(int argc, const char** argv)
 
 
     return 0;
+}*/
+
+// Chargement de la cascade
+int loadCascade()
+{
+    cout << "Chargement du fichier cascade en cours ...\n";
+
+    if (!face_cascade.load(CASCADE_PATH))
+    {
+        printf(" -- /!\ Erreur : la cascade n'a pas pu être chargée ! -- \n");
+        return -1;
+    };
+
+    cout << "Chargement du fichier cascade terminé ! \n";
+    return 0;
 }
 
-//functions
-void detectAndDisplay(Mat frame, CascadeClassifier cascade)
+// Détection d'un visage dans une image
+void detectOneFace(Mat frame)
 {
-    std::vector<Rect> faces;
+    cout << "Détection faciale en cours...\n";
 
+    // Variables
+    std::vector<Rect> faces;
     Mat frame_gray;
 
+    // Traitements sur l'image
     cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
     equalizeHist(frame_gray, frame_gray);
 
-    //-- Detect faces
-    cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+    // Détection
+    face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
 
+    // Mesures
     int cx = faces[0].x + faces[0].width * 0.5;
     int cy = faces[0].y + faces[0].height * 0.5;
-
     int rx = faces[0].width * 0.5;
     int ry = faces[0].height * 0.5;
-
+    
+    // Création du cercle de détection faciale
     Point center(cx, cy);
-
     ellipse(frame, center, Size(rx, ry), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
 
-    //-- Show what you got
-    imshow(window_name, frame);
+    cout << "Détection faciale terminée ! Affichage des résultats...\n";
+
+    // Affichage
+    imshow("Projet infographie", frame);
 }
 
-// Detect multiple faces - QUESTION 2
+// Détection de visage sur plusieurs images
+int detectOneFaceMultiPic(vector<Mat> images)
+{
+    loadCascade();
+    for (Mat image : images)
+    {
+        if (image.empty())
+        {
+            cout << "-- Erreur : l'image n'a pas pu etre chargée --\n";
+            return -1;
+        }
+        detectOneFace(image);
+        waitKey(0);
+    }
+}
+
+/*
+// Détection de plusieurs visages dans une image
 void detectAndDisplayMulti(Mat frame, CascadeClassifier cascade)
 {
     std::vector<Rect> faces;
@@ -130,7 +151,7 @@ void detectAndDisplayMulti(Mat frame, CascadeClassifier cascade)
     imshow(window_name, frame);
 }
 
-// Detect multiple faces - QUESTION 3
+// Détection de plusieurs visages dans une vidéo
 void detectAndDisplayVideo(VideoCapture caption, int indicator, CascadeClassifier cascade)
 {
     Mat frame;
@@ -159,7 +180,7 @@ void detectAndDisplayVideo(VideoCapture caption, int indicator, CascadeClassifie
     }
 }
 
-// QUESTION 4
+// Détection des yeux
 void detectAndDisplayEyes(Mat frame)
 {
     std::vector<Rect> eyes;
@@ -202,4 +223,4 @@ void detectAndDisplayEyes(Mat frame)
 
     //-- Show what you got
     imshow(window_name, frame);
-}
+}*/
