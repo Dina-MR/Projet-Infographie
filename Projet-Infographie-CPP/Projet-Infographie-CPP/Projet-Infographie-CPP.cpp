@@ -1,22 +1,39 @@
 // Projet-Infographie-CPP.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
 #include "FaceDetection.h"
+#include "ImageTraitment.h"
 
 using namespace cv;
 using namespace std;
 
 int main()
 {
-	//String image_test = "C:/DOCS/MASTER INFORMATIQUE - Lyon 2\Master 1 Informatique/S2 - Infographie/Projet-Infographie/dataset/images/mb1.png";
 	String image_test = "../../dataset/images/mb1.png";
-
-	/*Mat test = Mat::zeros(300, 600, CV_8UC3);
-	circle(test, Point(250, 150), 100, Scalar(0, 255, 128), -100);
-	circle(test, Point(350, 150), 100, Scalar(255, 255, 255), -100);*/
+	Mat blurTest;
 
 	vector<Mat> images = vector<Mat>();
 	images.push_back(imread(image_test));
 	detectOneFaceMultiPic(images);
+	// test du flou
+	blurTest = blurImage(images[0]);
+	imshow("Test flou", blurTest);
+	waitKey();
+	// test des différents niveaux de kernel
+	vector<vector<Mat>> imagesList = vector<vector<Mat>>();
+	imagesList = blurredImagesPerKernel(images, Bilateral);
+	for (vector<Mat> imgVec : imagesList)
+	{
+		for (Mat img : imgVec)
+		{
+			imshow("Test de flou avec variation de paramètres", img);
+			waitKey();
+		}
+	}
+	// test des modes de flou
+	/*vector<vector<Mat>> modeNormal = vector<vector<Mat>>();
+	vector<vector<Mat>> modeGaussien = vector<vector<Mat>>();
+	vector<vector<Mat>> modeMedian = vector<vector<Mat>>();
+	vector<vector<Mat>> modeBilateral = vector<vector<Mat>>();*/
 
 	return 0;
 }

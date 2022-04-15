@@ -80,9 +80,10 @@ void detectOneFace(Mat frame)
     // Variables
     std::vector<Rect> faces;
     Mat frame_gray;
+    Mat edited_frame = frame.clone();
 
     // Traitements sur l'image
-    cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    cvtColor(edited_frame, frame_gray, COLOR_BGR2GRAY);
     equalizeHist(frame_gray, frame_gray);
 
     // Détection
@@ -96,12 +97,12 @@ void detectOneFace(Mat frame)
     
     // Création du cercle de détection faciale
     Point center(cx, cy);
-    ellipse(frame, center, Size(rx, ry), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
+    ellipse(edited_frame, center, Size(rx, ry), 0, 0, 360, Scalar(255, 0, 255), 4, 8, 0);
 
     cout << "Détection faciale terminée ! Affichage des résultats...\n";
 
     // Affichage
-    imshow("Projet infographie", frame);
+    imshow("Projet infographie", edited_frame);
 }
 
 // Détection de visage sur plusieurs images
